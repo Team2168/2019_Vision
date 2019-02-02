@@ -19,13 +19,13 @@ while(1):
     # If there are any contours, finds the center of each
     if(len(contours) > 0):
         for i in contours:
-            if(cv2.contourArea(i) > 0):
+            if(cv2.contourArea(i) > 50):
                 M = cv2.moments(i)
                 cX = int(M['m10'] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
 
-    # Draws a dot in the center of the contour
-    cv2.circle(frame, (cX,cY), 5, (0,0,255), -1)
+                # Draws a dot in the center of the contour
+                cv2.circle(frame, (cX,cY), 5, (0,0,255), -1)
 
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
