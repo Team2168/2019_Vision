@@ -2,7 +2,7 @@ import cv2
 import numpy
 import FalconEyeMap
 
-# Creates a capture from the specified camera
+# Creates a capture from the specified camera or file
 cap = cv2.VideoCapture(FalconEyeMap.TEST_CAM_1)
 
 while(1):
@@ -16,7 +16,19 @@ while(1):
 
     cv2.drawContours(frame, contours, -1, (0,255,0), 3)
 
+    # If there are any contours, finds the center of each
+    if(len(contours) > 0):
+        for i in contours:
+            if(cv2.contourArea(i) > 0):
+                M = cv2.moments(i)
+                cX = int(M['m10'] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+
+    # Draws a dot in the center of the contour
+    cv2.circle(frame, (cX,cY), 5, (0,0,255), -1)
+
     cv2.imshow("frame", frame)
+    cv2.imshow("thresh", thresh)
 
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
