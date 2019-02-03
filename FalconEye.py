@@ -1,6 +1,13 @@
 import cv2
 import numpy
+import os
 import FalconEyeMap
+
+# Changes the camera settings
+os.system("v4l2-ctl --set-ctrl=contrast=4")
+os.system("v4l2-ctl --set-ctrl=brightness=4")
+os.system("v4l2-ctl --set-ctrl=saturation=4")
+os.system("v4l2-ctl --set-ctrl=gain=-4")
 
 # Creates a capture from the specified camera or file
 cap = cv2.VideoCapture(FalconEyeMap.TEST_CAM_1)
@@ -33,7 +40,7 @@ while(1):
                 # Draws a dot in the center of the contour
                 cv2.circle(frame, (cX,cY), 5, (0,0,255), -1)
 
-                # Draws a rectangle around the contour
+                # Draws a rotated rectangle around the contour
                 rect = cv2.minAreaRect(i)
                 box = cv2.boxPoints(rect)
                 box = numpy.int0(box)
