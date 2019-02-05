@@ -10,17 +10,32 @@ os.system("v4l2-ctl --set-ctrl=saturation=4")
 os.system("v4l2-ctl --set-ctrl=gain=-4")
 
 # Creates a capture from the specified camera or file
-cap = cv2.VideoCapture(FalconEyeMap.TEST_CAM_1)
+cap = cv2.VideoCapture(0)
 
 # Variables for the brightness threshold
 lower_brightness = 200
 upper_brightness = 255
 
+# Variables for the color threshold
+# lower_color = numpy.array([30, 175, 69])
+# upper_color = numpy.array([124, 255, 245])
+
+# Color threshold for testing
+lower_color = numpy.array([0, 0, 0])
+upper_color = numpy.array([255, 255, 255])
+
 while(1):
     _, frame = cap.read()
 
+    # Converts BGR to HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    # Thresholds the HSV image
+    mask = cv2.inRange(hsv, lower_color, upper_color)
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+
     # Converts frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
     # Sets the threshold for what brightness objects of interest must be
     _, thresh = cv2.threshold(gray, lower_brightness, upper_brightness, 0)
     # Finds the contours of everything within the brightness threshold
@@ -46,6 +61,7 @@ while(1):
                 box = numpy.int0(box)
                 cv2.drawContours(frame, [box], 0, (0,0,255), 2)
 
+    cv2.imshow("res", res)
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
 
