@@ -1,12 +1,16 @@
 import numpy as np
 import cv2
 import FalconEyeMap
+import time
 
 # Creates a capture from the specified camera or file
-cap = cv2.VideoCapture('field_static.avi')
+cap = cv2.VideoCapture('../target_samples/field_static.avi')
 distance = 0
 
 while 1:
+    # Slows video to 10 fps
+    time.sleep(0.1)
+
     _, frame = cap.read()
     
     # Converts frame to grayscale, then to a binary image
@@ -75,22 +79,21 @@ while 1:
                             if aspectRatio > (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT - FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE) and aspectRatio < (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT + FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE):
                                 angle = roiRect[2]
                                 if angle > (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT + FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE) and angle < (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT - FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE):
-                                    print("H")
-                                    #cx2 = roiRect[0][0]
-                                    #cy2 = roiRect[0][1]
-                                    # midpointX = int((cx + cx2)/2)
-                                    # midpointY = int((cy + cy2)/2)
+                                    cx2 = roiRect[0][0] + leftmostCol
+                                    cy2 = roiRect[0][1] + lowerRow
+                                    midpointX = int((cx + cx2)/2)
+                                    midpointY = int((cy + cy2)/2)
                                     frameCenterX = int((0 + cols)/2)
                                     frameCenterY = int((0 + rows)/2)
-                                    # distance = abs(int(midpointX - frameCenterX))
-                                    cv2.line(frame, (frameCenterX, 0), (frameCenterX, rows), (0,255,0), 3)
-                                    #cv2.line(frame, (midpointX, midpointY), (frameCenterX, frameCenterY), (0,255,0), 3)
+                                    distance = abs(int(midpointX - frameCenterX))
+                                    cv2.line(frame, (midpointX, midpointY), (frameCenterX, frameCenterY), (0,0,255), 3)
                                     break
                 
                     cv2.drawContours(subframe, roiContours, -1, (0,255,0), 3)
                     frame[lowerRow:upperRow, leftmostCol:rightmostCol] = subframe
                     break
 
+    cv2.line(frame, (int((0 + cols)/2), 0), (int((0 + cols)/2), rows), (0,255,0), 3)
     cv2.imshow("frame", frame)
 
     k = cv2.waitKey(5) & 0xFF
