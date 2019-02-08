@@ -27,3 +27,10 @@
 1. Start at frame center and grow outward at rate of 25%
 2. Use centroid of largest contour found to expand in that direction
 3. Apply **Main Algorithm** to authenticate and create a new `roi`
+
+## Runtime Threads
+### Video Server
+### Get Frame
+### Process Frame
+### Data Out
+### Data In
