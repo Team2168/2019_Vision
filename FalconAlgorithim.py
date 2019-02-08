@@ -37,40 +37,8 @@ while 1:
         for contour in contours:
             rect = cv2.minAreaRect(contour)
             aspectRatio = rect[1][0] / rect[1][1]
-            # Filters out contours with different aspect ratios than the vision targets
-            # Also determines whether the contour is a right or left vision target
-            if aspectRatio > (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT - FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE) and aspectRatio < (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT + FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE):
-                None
-                # angle = rect[2]
-                # # Confirms contour is a right vision target
-                # if angle > (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT + FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE) and angle < (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT - FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE):
-                #     cx = rect[0][0]
-                #     cy = rect[0][1]
-                #     contourWidth = rect[1][0]
-                #     contourHeight = rect[1][1]
-                    
-                #     # Creates a range of interest to the left of the contour
-                #     rightmostCol = int(cx + contourHeight)
-                #     leftmostCol = int(cx - 3*contourHeight)
-                #     upperRow = int(cy + contourHeight)
-                #     lowerRow = int(cy - contourHeight)
-
-                #     # Ensures the range of interest fits within the frame
-                #     if rightmostCol >= cols:
-                #         rightmostCol = cols
-                #     if leftmostCol <= 0:
-                #         leftmostCol = 0
-                #     if upperRow >= rows:
-                #         upperRow = rows
-                #     if lowerRow <= 0:
-                #         lowerRow = 0
-
-                #     roi = thresh[lowerRow:upperRow, leftmostCol:rightmostCol]
-                #     cv2.imshow("Roi", roi)
-                #     leftContour, hierarchy = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                #     cv2.drawContours(frame, leftContour, -1, (0,255,0), 3)
-                #     break
-            elif aspectRatio > (FalconEyeMap.TARGET_ASPECT_RATIO_LEFT - FalconEyeMap.TARGET_ASPECT_RATIO_LEFT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE) and aspectRatio < (FalconEyeMap.TARGET_ASPECT_RATIO_LEFT + FalconEyeMap.TARGET_ASPECT_RATIO_LEFT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE):
+            # Filters out contours with different aspect ratios than the left vision targets
+            if aspectRatio > (FalconEyeMap.TARGET_ASPECT_RATIO_LEFT - FalconEyeMap.TARGET_ASPECT_RATIO_LEFT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE) and aspectRatio < (FalconEyeMap.TARGET_ASPECT_RATIO_LEFT + FalconEyeMap.TARGET_ASPECT_RATIO_LEFT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE):
                 angle = rect[2]
                 # Confirms contour is a left vision target
                 if angle > (FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT + FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE) and angle < (FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT - FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE):
@@ -99,18 +67,26 @@ while 1:
                     subframe = frame[lowerRow:upperRow, leftmostCol:rightmostCol]
                     cv2.imshow("Roi", roi)
                     roiContours, hierarchy = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+                    roiContours = sorted(roiContours, key=lambda x: cv2.contourArea(x), reverse=True)
                     if len(roiContours) >= 2:
                         for roiContour in roiContours:
                             roiRect = cv2.minAreaRect(roiContour)
-                            aspectRatio = roiRect[1][0] / rect[1][1]
+                            aspectRatio = roiRect[1][0] / roiRect[1][1]
                             if aspectRatio > (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT - FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE) and aspectRatio < (FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT + FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT*FalconEyeMap.TARGET_ASPECT_RATIO_PERCENTAGE):
                                 angle = roiRect[2]
                                 if angle > (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT + FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE) and angle < (FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT - FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT*FalconEyeMap.TARGET_ANGLE_PERCENTAGE):
-                                    cx2 = roiRect[0][0]
-                                    cy2 = roiRect[0][1]
-                                    midpoint = int((cx + cx2)/2)
-                                    distance = abs(int)
-                    
+                                    print("H")
+                                    #cx2 = roiRect[0][0]
+                                    #cy2 = roiRect[0][1]
+                                    # midpointX = int((cx + cx2)/2)
+                                    # midpointY = int((cy + cy2)/2)
+                                    frameCenterX = int((0 + cols)/2)
+                                    frameCenterY = int((0 + rows)/2)
+                                    # distance = abs(int(midpointX - frameCenterX))
+                                    cv2.line(frame, (frameCenterX, 0), (frameCenterX, rows), (0,255,0), 3)
+                                    #cv2.line(frame, (midpointX, midpointY), (frameCenterX, frameCenterY), (0,255,0), 3)
+                                    break
+                
                     cv2.drawContours(subframe, roiContours, -1, (0,255,0), 3)
                     frame[lowerRow:upperRow, leftmostCol:rightmostCol] = subframe
                     break
