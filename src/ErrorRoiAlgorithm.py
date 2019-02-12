@@ -32,7 +32,8 @@ while(1):
 
     if len(contours) >= 2:
         lowestError = None
-        bestContour = None
+        bestTarget = None
+        bestTargetIsRight = None
         for contour in contours:
             rect = cv2.minAreaRect(contour)
             aspectRatio = rect[1][0] / rect[1][1]
@@ -54,13 +55,20 @@ while(1):
 
             error = aspectRatioError + angleError
 
+            # Determines if the contour is a right or left target
+            if rightAspectRatioError + rightAngleError <= leftAspectRatioError + leftAngleError:
+                isRight = True
+            else:
+                isRight = False
+
             # If there is no lowest error, then this contour has the lowest error and is the new best target
             if lowestError == None or error <= lowestError:
                 lowestError = error
-                bestContour = contour
+                bestTarget = contour
+                bestTargetIsRight = isRight
 
         # Draws a rectangle around the best target
-        bestRect = cv2.minAreaRect(bestContour)
+        bestRect = cv2.minAreaRect(bestTarget)
         bestBox = cv2.boxPoints(bestRect)
         bestBox = np.int0(bestBox)
         cv2.drawContours(frame, [bestBox], 0, (0,0,255), 2)
