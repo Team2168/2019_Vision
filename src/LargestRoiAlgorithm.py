@@ -61,6 +61,25 @@ while(1):
         roi = thresh[lowerRow:upperRow, leftmostCol:rightmostCol]
         subframe = frame[lowerRow:upperRow, leftmostCol:rightmostCol]
 
+        # Finds the contours in the ROI
+        contours, hierarchy = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        if len(sortedContours) >= 2:
+            # Sorts the contours from largest to smallest
+            sortedContours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
+
+            # Stores and draws second-largest target
+            secondLargestTarget = sortedContours[1]
+            secondLargestRect = cv2.minAreaRect(secondLargestTarget)
+            secondLargestBox = cv2.boxPoints(secondLargestRect)
+            secondLargestBox = np.int0(secondLargestBox)
+            cv2.drawContours(subframe, [secondLargestBox], 0, (0,255,0), 2)
+            frame[lowerRow:upperRow, leftmostCol:rightmostCol] = subframe
+
+            # Stores center of second-largest target
+            secondLargestRectCX = secondLargestRect[0][0] + leftmostCol
+            secondLargestRectCY = secondLargestRect[0][1] + lowerRow
+
     # Displays frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
