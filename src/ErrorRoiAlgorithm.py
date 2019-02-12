@@ -16,6 +16,10 @@ while(1):
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
 
+    # Stores the number of rows and columns in thresh
+    rows = thresh.shape[0]
+    cols = thresh.shape[1]
+
     # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -77,25 +81,39 @@ while(1):
         bestRectCX = bestRect[0][0]
         bestRectCY = bestRect[0][1]
         if bestTargetIsRight:
-            bestRectHeight = bestRect[1][0]
-            bestRectWidth = bestRect[1][1]
+            bestRectWidth = bestRect[1][0]
+            bestRectHeight = bestRect[1][1]
 
             rightmostCol = int(bestRectCX + bestRectHeight)
             leftmostCol = int(bestRectCX - 3*bestRectHeight)
             upperRow = int(bestRectCY + 2*bestRectHeight)
             lowerRow = int(bestRectCY - 2*bestRectHeight)
         else:
-            bestRectHeight = bestRect[1][1]
-            bestRectWidth = bestRect[1][0]
+            bestRectWidth = bestRect[1][1]
+            bestRectHeight = bestRect[1][0]
 
             rightmostCol = int(bestRectCX + 3*bestRectHeight)
             leftmostCol = int(bestRectCX - bestRectHeight)
             upperRow = int(bestRectCY + 2*bestRectHeight)
             lowerRow = int(bestRectCY - 2*bestRectHeight)
 
-    # Displays frame and thresh
+        # Ensures the range of interest fits in the frame
+        if rightmostCol >= cols:
+            rightmostCol = cols
+        if leftmostCol <= 0:
+            leftmostCol = 0
+        if upperRow >= rows:
+            upperRow = rows
+        if lowerRow <= 0:
+            lowerRow = 0
+
+        roi = thresh[lowerRow:upperRow, leftmostCol:rightmostCol]
+        subframe = frame[lowerRow:upperRow, leftmostCol:rightmostCol]
+
+    # Displays frame, thresh, and roi
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
+    cv2.imshow("ROI", roi)
 
     # Closes the program if Esc is pressed
     k = cv2.waitKey(5) & 0xFF
