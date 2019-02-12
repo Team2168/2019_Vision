@@ -90,7 +90,7 @@ while(1):
             # Stores center of second-largest target and frame
             secondLargestRectCX = secondLargestRect[0][0] + leftmostCol
             secondLargestRectCY = secondLargestRect[0][1] + lowerRow
-            frameCenterX = int((0 + cols) / 2)
+            frameCenterX = int(cols / 2)
 
             # Calculates midpoint of targets and distance between midpoint and center of frame
             midpointX = int((largestRectCX + secondLargestRectCX) / 2)

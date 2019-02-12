@@ -59,7 +59,7 @@ while(1):
         largestRectCY = largestRect[0][1]
         secondLargestRectCX = secondLargestRect[0][0]
         secondLargestRectCY = secondLargestRect[0][1]
-        frameCenterX = int((0 + cols) / 2)
+        frameCenterX = int(cols / 2)
 
         # Calculates midpoint of targets and distance between midpoint and center of frame
         midpointX = int((largestRectCX + secondLargestRectCX) / 2)

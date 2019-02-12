@@ -111,8 +111,8 @@ while 1:
                             midpointX = int((cx + cx2)/2)
                             midpointY = int((cy + cy2)/2)
                             # Stores the center of the frame
-                            frameCenterX = int((0 + cols)/2)
-                            frameCenterY = int((0 + rows)/2)
+                            frameCenterX = int(cols/2)
+                            frameCenterY = int(rows/2)
                             # Finds the distance and draws a line from the midpoint to the center of the frame
                             distance = abs(int(midpointX - frameCenterX))
                             cv2.line(frame, (midpointX, midpointY), (frameCenterX, midpointY), (0,0,255), 3)
@@ -124,7 +124,7 @@ while 1:
                 break
 
     # Draws a vertical line in the center of the frame before showing the frame
-    cv2.line(frame, (int((0 + cols)/2), 0), (int((0 + cols)/2), rows), (0,255,0), 3)
+    cv2.line(frame, (int(cols/2), 0), (int(cols/2), rows), (0,255,0), 3)
     cv2.imshow("frame", frame)
 
     # Closes the program if Esc is pressed
