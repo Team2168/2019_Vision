@@ -18,6 +18,10 @@ while(1):
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
 
+    # Stores the number of rows and columns in thresh
+    rows = thresh.shape[0]
+    cols = thresh.shape[1]
+
     # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -38,9 +42,29 @@ while(1):
         largestRectHeight = largestRect[1][0]
         largestRectWidth = largestRect[1][1]
 
+        # Creates a range of interest surrounding both sides of the target
+        rightmostCol = int(largestRectCX + 7*largestRectHeight)
+        leftmostCol = int(largestRectCX - 7*largestRectHeight)
+        upperRow = int(largestRectCY + 2*largestRectHeight)
+        lowerRow = int(largestRectCY - 2*largestRectHeight)
+
+        # Ensures the range of interest fits within the frame
+        if rightmostCol >= cols:
+            rightmostCol = cols
+        if leftmostCol <= 0:
+            leftmostCol = 0
+        if upperRow >= rows:
+            upperRow = rows
+        if lowerRow <= 0:
+            lowerRow = 0
+
+        roi = thresh[lowerRow:upperRow, leftmostCol:rightmostCol]
+        subframe = frame[lowerRow:upperRow, leftmostCol:rightmostCol]
+
     # Displays frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
+    cv2.imshow("ROI", roi)
 
     # Closes the program if Esc is pressed
     k = cv2.waitKey(5) & 0xFF
