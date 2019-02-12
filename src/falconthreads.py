@@ -9,6 +9,9 @@ import cv2
 from imagedata import ImageData 
 from imageprocessor import ImageProcessor
 from imageprocessing import BasicAlgorithm
+from imageprocessing import AdvancedAlgorithm
+
+import FalconEyeMap
 
 """ @class: FalconThreads
     @description:
@@ -40,9 +43,10 @@ class MJPEGServer(FalconThreads):
 class DebugVideoFeed(FalconThreads):
     def run(self):
         self.keepRunning = True
-        time.sleep(0.5)
 
         while self.keepRunning:
+            time.sleep(1/30)
+            print("show...")
             cv2.imshow("Frame", self.sharedData.frame)
             k = cv2.waitKey(5) & 0xFF
             if k == 27:
@@ -54,6 +58,7 @@ class RetrieveImage(FalconThreads):
         self.keepRunning = True
 
         while self.keepRunning:
+            time.sleep(1/60)
             self.sharedData.getFrame()
 
 class ProcessImage(FalconThreads):
@@ -66,16 +71,16 @@ class ProcessImage(FalconThreads):
             the Image Processor constructor or using the setAlgorithm
             method.
         """
-        self.imgProcessor = ImageProcessor(BasicAlgorithm())
+        self.imgProcessor = ImageProcessor(BasicAlgorithm(self.sharedData))
         while self.keepRunning:
-            self.imgProcessor.processImage(self.sharedData.thresh)
+            self.imgProcessor.processImage()
 
 class MainThread(FalconThreads):
     """ Setup all threads
     """
     def setupThreads(self):
         # Shared data to connect all image services
-        self.imData = ImageData(0)
+        self.imData = ImageData(FalconEyeMap.VID_3)
 
         # Retireve image thread
         self.recvImg = RetrieveImage()
