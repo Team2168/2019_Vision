@@ -9,6 +9,9 @@ class ImageData(object):
         self.camera = cv2.VideoCapture(cameraPort)
         self.frame = None
         self.thresh = None
+        self.contours = []
+        self.targetX = 0
+        self.targetY = 0
     
     def __del__(self):
         self.camera.release()
