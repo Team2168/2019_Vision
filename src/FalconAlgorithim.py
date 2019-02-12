@@ -115,7 +115,7 @@ while 1:
                             frameCenterY = int((0 + rows)/2)
                             # Finds the distance and draws a line from the midpoint to the center of the frame
                             distance = abs(int(midpointX - frameCenterX))
-                            cv2.line(frame, (midpointX, midpointY), (frameCenterX, frameCenterY), (0,0,255), 3)
+                            cv2.line(frame, (midpointX, midpointY), (frameCenterX, midpointY), (0,0,255), 3)
                             break
 
                 # Draws the contours onto subframe and then puts them onto frame

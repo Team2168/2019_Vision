@@ -4,7 +4,7 @@ import FalconEyeMap
 import time
 
 # Creates a capture from the specified camera or file
-cap = cv2.VideoCapture('../target_samples/field_static.avi')
+cap = cv2.VideoCapture('../target_samples/field_panel_2_rocket.avi')
 
 distance = None
 
@@ -20,6 +20,17 @@ while(1):
 
     # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filters out contours with small areas
+    i = 0
+    contoursLen = len(contours)
+    while i < contoursLen:
+        currContour = contours[i]
+        if cv2.contourArea(currContour) < FalconEyeMap.CONTOUR_SIZE_THRESHOLD:
+            del contours[i]
+            i-=1
+            contoursLen-=1
+        i+=1
 
     if len(contours) >= 2:
         lowestError = None
