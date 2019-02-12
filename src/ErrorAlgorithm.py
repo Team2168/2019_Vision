@@ -23,7 +23,9 @@ while(1):
 
     if len(contours) >= 2:
         lowestError = None
+        secondLowestError = None
         bestTarget = None
+        secondBestTarget = None
         for contour in contours:
             rect = cv2.minAreaRect(contour)
             aspectRatio = rect[1][0] / rect[1][1]
@@ -49,16 +51,40 @@ while(1):
             if lowestError == None:
                 lowestError = error
                 bestTarget = contour
+            # Otherwise, if there is no second-lowest error, find one
+            elif secondLowestError == None:
+                # If contour has the new lowest error, contour is the new best target and the previous best is now the second-best
+                if error < lowestError:
+                    secondLowestError = lowestError
+                    secondBestTarget = bestTarget
+                    lowestError = error
+                    bestTarget = contour
+                # If contour doesn't have the new lowest error, it has the second-lowest and is the new second-best contour
+                else:
+                    secondLowestError = error
+                    secondBestTarget = contour
             # Otherwise, if this contour's error is lower than lowestError, it is the new best target
             elif error <= lowestError:
+                secondLowestError = lowestError
+                secondBestTarget = bestTarget
                 lowestError = error
                 bestTarget = contour
+            # Otherwise, if this contour's error is lower than secondBestError, it is the new second-best target
+            elif error <= secondLowestError:
+                secondLowestError = error
+                secondBestTarget = contour
 
         # Draws a rectangle around the best target
         bestRect = cv2.minAreaRect(bestTarget)
         bestBox = cv2.boxPoints(bestRect)
         bestBox = np.int0(bestBox)
         cv2.drawContours(frame, [bestBox], 0, (0,0,255), 2)
+
+        # Draws a rectangle around the second-best target
+        secondBestRect = cv2.minAreaRect(secondBestTarget)
+        secondBestBox = cv2.boxPoints(secondBestRect)
+        secondBestBox = np.int0(secondBestBox)
+        cv2.drawContours(frame, [secondBestBox], 0, (0,0,255), 2)
 
     # Displays frame and thresh
     cv2.imshow("frame", frame)
