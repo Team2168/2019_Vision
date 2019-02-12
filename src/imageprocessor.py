@@ -21,6 +21,8 @@ from imageprocessing import AdvancedAlgorithm
 class ImageProcessor(object):
     def __init__(self, processStrategy):
         self.algorithm = processStrategy
+    def setAlgorithm(self, newAlgorithm):
+        self.algorithm = newAlgorithm
     def processImage(self):
         self.algorithm.processImage()
 

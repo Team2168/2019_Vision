@@ -7,6 +7,8 @@ import threading
 import cv2
 
 from imagedata import ImageData 
+from imageprocessor import ImageProcessor
+from imageprocessing import BasicAlgorithm
 
 """ @class: FalconThreads
     @description:
@@ -56,15 +58,34 @@ class RetrieveImage(FalconThreads):
 
 class ProcessImage(FalconThreads):
     def run(self):
-        pass
+        self.keepRunning = True
+
+        """ Image Processor is the context for the image processing
+            algorithms we are developing. We can plug and play with
+            any of the implemented algorithms by dorpping them into
+            the Image Processor constructor or using the setAlgorithm
+            method.
+        """
+        self.imgProcessor = ImageProcessor(BasicAlgorithm())
+        while self.keepRunning:
+            self.imgProcessor.processImage(self.sharedData.thresh)
 
 class MainThread(FalconThreads):
     """ Setup all threads
     """
     def setupThreads(self):
+        # Shared data to connect all image services
         self.imData = ImageData(0)
+
+        # Retireve image thread
         self.recvImg = RetrieveImage()
         self.recvImg.setSharedData(self.imData)
+
+        # Processing image thread
+        self.imgProcess = ProcessImage()
+        self.imgProcess.setSharedData(self.imData)
+
+        # Show the video window (Debbugging only)
         self.debugFeed = DebugVideoFeed()
         self.debugFeed.setSharedData(self.imData)
 
@@ -72,6 +93,8 @@ class MainThread(FalconThreads):
     """
     def startThreads(self):
         self.recvImg.start()
+        self.imgProcess.start()
+
         self.debugFeed.start()
 
     """ Kill all threads when main ends
@@ -81,6 +104,9 @@ class MainThread(FalconThreads):
 
         self.recvImg.endThread()
         self.recvImg.join()
+
+        self.imgProcess.endThread()
+        self.imgProcess.join()
 
         self.debugFeed.endThread()
         self.debugFeed.join()
