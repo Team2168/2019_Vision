@@ -73,6 +73,26 @@ while(1):
         bestBox = np.int0(bestBox)
         cv2.drawContours(frame, [bestBox], 0, (0,0,255), 2)
 
+        # Creates a range of interest to the side of the target
+        bestRectCX = bestRect[0][0]
+        bestRectCY = bestRect[0][1]
+        if bestTargetIsRight:
+            bestRectHeight = bestRect[1][0]
+            bestRectWidth = bestRect[1][1]
+
+            rightmostCol = int(bestRectCX + bestRectHeight)
+            leftmostCol = int(bestRectCX - 3*bestRectHeight)
+            upperRow = int(bestRectCY + 2*bestRectHeight)
+            lowerRow = int(bestRectCY - 2*bestRectHeight)
+        else:
+            bestRectHeight = bestRect[1][1]
+            bestRectWidth = bestRect[1][0]
+
+            rightmostCol = int(bestRectCX + 3*bestRectHeight)
+            leftmostCol = int(bestRectCX - bestRectHeight)
+            upperRow = int(bestRectCY + 2*bestRectHeight)
+            lowerRow = int(bestRectCY - 2*bestRectHeight)
+
     # Displays frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
