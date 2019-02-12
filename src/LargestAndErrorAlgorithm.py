@@ -21,6 +21,17 @@ while(1):
     # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+    if len(contours) >= 2:
+        # Sorts contours from largest to smallest
+        sortedContours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
+
+        if len(sortedContours) >= 8:
+            largestContours = list()
+            for i in range(8):
+                largestContours[i] = sortedContours[i]
+        else:
+            largestContours = sortedContours
+
     # Displays the frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
