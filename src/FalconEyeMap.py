@@ -21,3 +21,8 @@ TARGET_ASPECT_RATIO_RIGHT = TARGET_WIDTH/TARGET_LENGTH #0.3636
 TARGET_ASPECT_RATIO_LEFT = TARGET_LENGTH/TARGET_WIDTH #2.75
 
 TARGET_ASPECT_RATIO_PERCENTAGE = 0.25
+
+#For testing and debugging
+VID_1 = "../target_samples/field.avi"
+VID_2 = "../target_samples/field_static.avi"
+VID_3 = "../target_samples/field_panel_2_rocket.avi"
