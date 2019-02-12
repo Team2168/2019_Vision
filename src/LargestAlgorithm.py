@@ -49,7 +49,6 @@ while(1):
         secondLargestRectCX = secondLargestRect[0][0]
         secondLargestRectCY = secondLargestRect[0][1]
         frameCenterX = int((0 + cols) / 2)
-        frameCenterY = int((0 + rows) / 2)
 
         # Calculates midpoint of targets and distance between midpoint and center of frame
         midpointX = int((largestRectCX + secondLargestRectCX) / 2)
@@ -57,7 +56,7 @@ while(1):
         distance = abs(int(frameCenterX - midpointX))
 
         # Draws a line from midpoint to center of frame
-        cv2.line(frame, (midpointX, midpointY), (frameCenterX, frameCenterY), (0,0,255), 3)
+        cv2.line(frame, (midpointX, midpointY), (frameCenterX, midpointY), (0,0,255), 3)
 
     # Draws a vertical line in the center of frame
     cv2.line(frame, (frameCenterX, 0), (frameCenterX, rows), (0,255,0), 3)
