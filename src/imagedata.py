@@ -2,6 +2,7 @@
 """
 
 import cv2
+import FalconEyeMap
 
 class ImageData(object):
     def __init__(self, cameraPort=0):
@@ -12,9 +13,10 @@ class ImageData(object):
     def __del__(self):
         self.camera.release()
 
-
     def getFrame(self):
         _, self.frame = self.camera.read()
+        grayscale = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        _, self.thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
 
 if __name__ == '__main__':
     import time
