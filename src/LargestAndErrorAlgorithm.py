@@ -32,6 +32,27 @@ while(1):
         else:
             largestContours = sortedContours
 
+        for contour in largestContours:
+            rect = cv2.minAreaRect(contour)
+            aspectRatio = rect[1][0] / rect[1][1]
+            angle = rect[2]
+
+            # Finds the percent error for aspect ratio and angle
+            rightAspectRatioError = abs((aspectRatio - FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT) / FalconEyeMap.TARGET_ASPECT_RATIO_RIGHT)
+            leftAspectRatioError = abs((aspectRatio - FalconEyeMap.TARGET_ASPECT_RATIO_LEFT) / FalconEyeMap.TARGET_ASPECT_RATIO_LEFT)
+            if rightAspectRatioError <= leftAspectRatioError:
+                aspectRatioError = rightAspectRatioError
+            else:
+                aspectRatioError = leftAspectRatioError
+            rightAngleError = abs((angle - FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT) / FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT)
+            leftAngleError = abs((angle - FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT) / FalconEyeMap.TARGET_ANGLE_DEGREES_LEFT)
+            if rightAngleError <= leftAngleError:
+                angleError = rightAngleError
+            else:
+                angleError = leftAngleError
+
+            error = aspectRatioError + angleError
+
     # Displays the frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
