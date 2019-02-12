@@ -54,6 +54,17 @@ while(1):
 
             error = aspectRatioError + angleError
 
+            # If there is no lowest error, then this contour has the lowest error and is the new best target
+            if lowestError == None or error <= lowestError:
+                lowestError = error
+                bestContour = contour
+
+        # Draws a rectangle around the best target
+        bestRect = cv2.minAreaRect(bestContour)
+        bestBox = cv2.boxPoints(bestRect)
+        bestBox = np.int0(bestBox)
+        cv2.drawContours(frame, [bestBox], 0, (0,0,255), 2)
+
     # Displays frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
