@@ -16,10 +16,28 @@ while(1):
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
 
-    # Finds and shows the contours within the brightness threshold
+    # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(frame, contours, -1, (0,255,0), 3)
 
+    if len(contours) >= 2:
+        # Sorts contours from largest to smallest
+        sortedContours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
+
+        # Stores the two largest contours
+        largestTarget = sortedContours[0]
+        secondLargestTarget = sortedContours[1]
+
+        # Draws the two largest targets
+        largestRect = cv2.minAreaRect(largestTarget)
+        largestBox = cv2.boxPoints(largestRect)
+        largestBox = np.int0(largestBox)
+        secondLargestRect = cv2.minAreaRect(secondLargestTarget)
+        secondLargestBox = cv2.boxPoints(secondLargestRect)
+        secondLargestBox = np.int0(secondLargestBox)
+        cv2.drawContours(frame, [largestBox], 0, (0,0,255), 2)
+        cv2.drawContours(frame, [secondLargestBox], 0, (0,0,255), 2)
+
+    # Displays the frame and thresh
     cv2.imshow("frame", frame)
     cv2.imshow("thresh", thresh)
 
