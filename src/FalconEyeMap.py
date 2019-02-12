@@ -3,8 +3,8 @@ TEST_CAM_2 = 1
 FRONT_CAM_IP = "http://10.21.68.90/mjpg/video.mjpg"
 BACK_CAM_IP = "http://10.21.68.91/mjpg/video.mjpg"
 
-LOWER_BRIGHTNESS = 20
-UPPER_BRIGHTNESS = 40
+LOWER_BRIGHTNESS = 15
+UPPER_BRIGHTNESS = 50
 
 CONTOUR_SIZE_THRESHOLD = 165.0 #Varies by camera
 
