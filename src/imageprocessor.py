@@ -11,8 +11,6 @@
     is needed to help our robot see game pieces or targets
     better.
 """
-from imageprocessing import BasicAlgorithm
-from imageprocessing import AdvancedAlgorithm
 
 """ @class: ImageProcessor
     @description:
@@ -25,8 +23,4 @@ class ImageProcessor(object):
         self.algorithm = newAlgorithm
     def processImage(self):
         self.algorithm.processImage()
-
-
-if __name__=='__main__':
-    img = ImageProcessor(BasicAlgorithm())
-    img.processImage()
+        
