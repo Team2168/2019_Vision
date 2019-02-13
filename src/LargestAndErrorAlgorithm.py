@@ -18,6 +18,10 @@ while(1):
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
 
+    # Stores the number of rows and columns in thresh
+    rows = thresh.shape[0]
+    cols = thresh.shape[1]
+
     # Finds the contours within the brightness threshold
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -106,6 +110,24 @@ while(1):
         secondBestBox = cv2.boxPoints(secondBestRect)
         secondBestBox = np.int0(secondBestBox)
         cv2.drawContours(frame, [secondBestBox], 0, (0,0,255), 2)
+
+        # Stores centers of targets and center of frame
+        bestRectCX = bestRect[0][0]
+        bestRectCY = bestRect[0][1]
+        secondBestRectCX = secondBestRect[0][0]
+        secondBestRectCY = secondBestRect[0][1]
+        frameCenterX = int(cols / 2)# Calculates midpoint of targets and distance between midpoint and center of frame
+
+        # Calculates midpoint of targets and distance between midpoint and center of frame
+        midpointX = int((bestRectCX + secondBestRectCX) / 2)
+        midpointY = int((bestRectCY + secondBestRectCY) / 2)
+        distance = abs(frameCenterX - midpointX)
+
+        # Draws a line from midpoint to center of frame
+        cv2.line(frame, (midpointX, midpointY), (frameCenterX, midpointY), (0,0,255), 3)
+
+    # Draws a vertical line in the center of frame
+    cv2.line(frame, (frameCenterX, 0), (frameCenterX, rows), (0,255,0), 3)
 
     # Displays the frame and thresh
     cv2.imshow("frame", frame)
