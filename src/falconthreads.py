@@ -45,8 +45,7 @@ class DebugVideoFeed(FalconThreads):
         self.keepRunning = True
 
         while self.keepRunning:
-            time.sleep(1/30)
-            print("show...")
+            time.sleep(1/30)# TODO Debug only: FalconEyeMap.SHOW_IMAGE_FREQ
             cv2.imshow("Frame", self.sharedData.frame)
             k = cv2.waitKey(5) & 0xFF
             if k == 27:
@@ -58,12 +57,19 @@ class RetrieveImage(FalconThreads):
         self.keepRunning = True
 
         while self.keepRunning:
-            time.sleep(1/60)
+            time.sleep(1/60) #TODO Debug only
+            e1 = cv2.getTickCount()
             self.sharedData.getFrame()
+            e2 = cv2.getTickCount()
+            t = (e2-e1)/cv2.getTickFrequency()
+            #print(t) TODO: Debug only
 
 class ProcessImage(FalconThreads):
     def run(self):
         self.keepRunning = True
+        self.worstTime = 0.0
+        self.meanTime = 0.0
+        self.counter = 0
 
         """ Image Processor is the context for the image processing
             algorithms we are developing. We can plug and play with
@@ -73,14 +79,23 @@ class ProcessImage(FalconThreads):
         """
         self.imgProcessor = ImageProcessor(BasicAlgorithm(self.sharedData))
         while self.keepRunning:
+            e1 = cv2.getTickCount()
             self.imgProcessor.processImage()
+            e2 = cv2.getTickCount()
+            t = (e2-e1)/cv2.getTickFrequency()
+            self.meanTime+=t
+            self.counter+=1
+            if t>self.worstTime:
+                self.worstTime = t
+        print("Worst img processsing time took: " +str(self.worstTime)) #TODO Debugging only
+        print("Mean img processsing time took: " +str(self.meanTime/self.counter)) 
 
 class MainThread(FalconThreads):
     """ Setup all threads
     """
     def setupThreads(self):
         # Shared data to connect all image services
-        self.imData = ImageData(FalconEyeMap.VID_3)
+        self.imData = ImageData(FalconEyeMap.VID_1)
 
         # Retireve image thread
         self.recvImg = RetrieveImage()
@@ -139,6 +154,6 @@ if __name__=='__main__':
     import time
     main = MainThread()
     main.start()
-    time.sleep(10)
+    time.sleep(15)
     main.endThread()
     main.join()
