@@ -12,6 +12,7 @@ import FalconEyeMap
 class ImageProcessingAlgorithm(object):
     def __init__(self, imageData):
         self.imgData = imageData
+
     def processImage(self):
         raise NotImplementedError
 
@@ -34,12 +35,15 @@ class BasicAlgorithm (ImageProcessingAlgorithm):
         return (aspectInTolerance and angleInTolerance)
 
     def processImage(self):
+        self.targetSingle = []
+        self.targetPair = []
         self.imgData.contours, _ = cv2.findContours(self.imgData.thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
         #Ensure at least 2 contours present
         if len(self.imgData.contours)>=2:
             i=0
             while i < len(self.imgData.contours):
+                #print("Debugg Area: " + str(cv2.contourArea(self.imgData.contours[i])))
                 if cv2.contourArea(self.imgData.contours[i]) < FalconEyeMap.CONTOUR_SIZE_THRESHOLD:
                     del self.imgData.contours[i]
                     i-=1
@@ -81,11 +85,36 @@ class BasicAlgorithm (ImageProcessingAlgorithm):
                 angleErrorRight = self.calculateError(angle, FalconEyeMap.TARGET_ANGLE_DEGREES_RIGHT)
 
                 if self.isLeft(aspectErrorLeft, angleErrorLeft):
-                    print("left")
+                    targetData = (cx, cy, cv2.contourArea(candidate), 0)
+                    self.targetSingle.append(targetData)
                 elif self.isRight(aspectErrorRight, angleErrorRight):
-                    print("right")
-                else:
-                    print("neither")
+                    targetData = (cx, cy, cv2.contourArea(candidate), 1)
+                    self.targetSingle.append(targetData)
+            
+            if len(self.targetSingle)>=2:
+                self.targetSingle = sorted(self.targetSingle, key=lambda x: x[0])
+
+                if self.targetSingle[0][3] == 1:
+                    self.targetSingle.pop(0)
+                if self.targetSingle[-1][3] == 0:
+                    self.targetSingle.pop()
+                if (len(self.targetSingle)>=2 and len(self.targetSingle)%2 == 0):
+                    i=0
+                    while (i<len(self.targetSingle)/2):
+                        target = (self.targetSingle[i],self.targetSingle[i+1])
+                        self.targetPair.append(target)
+                        i+=2
+                    for t in self.targetPair:
+                        targetX = t[0][0] + t[1][0]
+                        targetX = int(targetX/2)
+                        targetY = t[0][1] + t[1][1]
+                        targetY = int(targetY/2)
+                        cv2.circle(self.imgData.frame,(targetX,targetY), 5, (0,0,255), -1)
+
+
+
+                
+
 
 """ @class: AdvanceAlgorithm
     @description:
