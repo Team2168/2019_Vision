@@ -39,6 +39,8 @@ while 1:
     time.sleep(0.1)
 
     _, frame = cap.read()
+
+    tickCount1 = cv2.getTickCount()
     
     # Converts frame to grayscale, then to a binary image
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -94,7 +96,6 @@ while 1:
 
                 roi = thresh[lowerRow:upperRow, leftmostCol:rightmostCol]
                 subframe = frame[lowerRow:upperRow, leftmostCol:rightmostCol]
-                cv2.imshow("Roi", roi)
                 # Finds and sorts the contours within the range of interest
                 roiContours, hierarchy = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
                 roiContours = sorted(roiContours, key=lambda x: cv2.contourArea(x), reverse=True)
@@ -123,9 +124,14 @@ while 1:
                 frame[lowerRow:upperRow, leftmostCol:rightmostCol] = subframe
                 break
 
+    tickCount2 = cv2.getTickCount()
+    timeElapsed = (tickCount2 - tickCount1) / cv2.getTickFrequency()
+    print(timeElapsed)
+
     # Draws a vertical line in the center of the frame before showing the frame
     cv2.line(frame, (int(cols/2), 0), (int(cols/2), rows), (0,255,0), 3)
     cv2.imshow("frame", frame)
+    cv2.imshow("ROI", roi)
 
     # Closes the program if Esc is pressed
     k = cv2.waitKey(5) & 0xFF

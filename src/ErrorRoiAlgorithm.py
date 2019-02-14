@@ -52,6 +52,8 @@ while(1):
 
     _, frame = cap.read()
 
+    tickCount1 = cv2.getTickCount()
+
     # Converts frame to grayscale, then to a binary image
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grayscale, FalconEyeMap.LOWER_BRIGHTNESS, FalconEyeMap.UPPER_BRIGHTNESS, 0)
@@ -155,6 +157,10 @@ while(1):
 
     # Draws a vertical line in the center of frame
     cv2.line(frame, (frameCenterX, 0), (frameCenterX, rows), (0,255,0), 3)
+
+    tickCount2 = cv2.getTickCount()
+    timeElapsed = (tickCount2 - tickCount1) / cv2.getTickFrequency()
+    print(timeElapsed)
 
     # Displays frame, thresh, and roi
     cv2.imshow("frame", frame)
