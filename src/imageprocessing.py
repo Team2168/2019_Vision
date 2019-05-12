@@ -49,7 +49,7 @@ class BasicAlgorithm (ImageProcessingAlgorithm):
 
         """
             Begin Algorithm:
-                1. Ensure at leasr 2 contours present
+                1. Ensure at least 2 contours present
                 2. Remove contours that are too far or 
                     could be considered noise; use
                     size threshold to filter
